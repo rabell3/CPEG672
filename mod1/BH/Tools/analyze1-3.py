@@ -1,4 +1,4 @@
-import sys, re, itertools
+import sys, re, itertools, pickle
 from collections import Counter
 from cpeglibs import *
 
@@ -118,6 +118,11 @@ allkeys = findallkeys(codedmessage)
 #    print ''.join(newstring)
 print "keys " , allkeys
 
-#print list(itertools.permutations(allkeys))
+
+
+#for rows in allkeys:
+#    for cols in allkeys:
+#        for elements in cols:
+#            print "r :" , rows, "e :" , elements
 
 print "English score: " , ourscore
