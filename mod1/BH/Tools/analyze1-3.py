@@ -31,9 +31,6 @@ def findfreq(message):
         sum_freqs_squared += frequency[ltr]*frequency[ltr]
     return sum_freqs_squared
 
-def shiftBy(c, n):
-    return chr(((ord(c) - ord('a') + n) % 26) + ord('a'))
-
 def rotate(message):
     for all in range (1, 27):
         i=0
@@ -90,6 +87,10 @@ def findallkeys(message):
         keyshift+=1
     return keys
 
+def elmsearch(thislist,offset):
+    print thislist[offset]
+    return thislist[offset]
+
 #----------------------------------------------------------------
 #---
 #---  Main function
@@ -118,7 +119,23 @@ allkeys = findallkeys(codedmessage)
 #    print ''.join(newstring)
 print "keys " , allkeys
 
+for i in range(len(allkeys)):
+    if len(allkeys[i]) == 1:
+        print allkeys[i]
+    else:
+        print "crap"
 
+#decryptors = []
+#pos=1
+#for i in range(len(allkeys)):
+#    print "i: " , allkeys[i]
+#    for j in range(len(allkeys[i])):
+#        print "j: " , allkeys[i]
+        #decryptors[pos].append([allkeys[i]])
+        #pos+=1
+        #decryptors[pos].append[i]
+
+#print "decryptors: " , decryptors
 
 #for rows in allkeys:
 #    for cols in allkeys:
