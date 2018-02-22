@@ -88,7 +88,7 @@ def findallkeys(message):
     return keys
 
 def elmsearch(thislist,offset):
-    print thislist[offset]
+    #print thislist[offset]
     return thislist[offset]
 
 #----------------------------------------------------------------
@@ -101,8 +101,6 @@ fh=sys.argv[1]
 codedmessage=readfile(fh)
 
 #print codedmessage
-
-newstring = []
 
 ourscore = fitsenglish(codedmessage)
 allkeys = findallkeys(codedmessage)
@@ -118,12 +116,25 @@ allkeys = findallkeys(codedmessage)
     #print keys
 #    print ''.join(newstring)
 print "keys " , allkeys
-
+multicount = 0
 for i in range(len(allkeys)):
-    if len(allkeys[i]) == 1:
-        print allkeys[i]
-    else:
-        print "crap"
+    if len(allkeys[i]) > 1:
+        multicount+=1
+print "multicount: " , multicount
+newstring = []
+
+for allofem in range(multicount**multicount):
+    for i in range(len(allkeys)):
+        if len(allkeys[i]) == 1:
+            print allkeys[i]
+            newstring.append(chr(elmsearch(allkeys[i],0)+97))
+        else:
+            #multicount+=1
+            print elmsearch(allkeys[i],0)
+            newstring.append(chr(elmsearch(allkeys[i],0)+97))
+            #print elmsearch(allkeys[i],1)
+
+print ''.join(newstring)
 
 #decryptors = []
 #pos=1
