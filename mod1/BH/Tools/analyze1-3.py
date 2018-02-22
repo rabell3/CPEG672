@@ -58,7 +58,7 @@ def findstripkey(message):
     for ltr in frequency:
         sum_freqs_squared += frequency[ltr]*frequency[ltr]
 
-    allkeys = []
+    everykey = []
 
     for possible_key in range(1, 26):
         sum_f_sqr = 0.0
@@ -67,9 +67,9 @@ def findstripkey(message):
             sum_f_sqr += normal_freqs[ltr]*frequency[caesar_guess]
         if abs(sum_f_sqr - .065) < tolerance:
             return_key = possible_key
-            allkeys.append(possible_key)
+            everykey.append(possible_key)
             print "Key is probably: ", possible_key, " f_sqr is ",sum_f_sqr
-    return allkeys
+    return everykey
 
 def findallkeys(message):
     strip={}
@@ -103,53 +103,53 @@ codedmessage=readfile(fh)
 #print codedmessage
 
 ourscore = fitsenglish(codedmessage)
-allkeys = findallkeys(codedmessage)
+posskeys = findallkeys(codedmessage)
 
 #    count = 0
-#    newstring = []
+#    allkeys = []
 #    if len(keys) != 0:
 #        while count < len(codedmessage):
 #            shifted=shiftBy(codedmessage[count], 26 - keys[count%len(keys)])
-#            newstring.append(shifted)
+#            allkeys.append(shifted)
 #            count+=1
 #    keyshift+=1
     #print keys
-#    print ''.join(newstring)
-print "keys " , allkeys
+#    print ''.join(allkeys)
+print "keys " , posskeys
 multicount = 0
-for i in range(len(allkeys)):
-    if len(allkeys[i]) > 1:
+for i in range(len(posskeys)):
+    if len(posskeys[i]) > 1:
         multicount+=1
 print "multicount: " , multicount
-newstring = []
+allkeys = []
 
 for allofem in range(multicount**multicount):
-    for i in range(len(allkeys)):
-        if len(allkeys[i]) == 1:
-            print allkeys[i]
-            newstring.append(chr(elmsearch(allkeys[i],0)+97))
+    for i in range(len(posskeys)):
+        if len(posskeys[i]) == 1:
+            print posskeys[i]
+            allkeys.append(chr(elmsearch(posskeys[i],0)+97))
         else:
             #multicount+=1
-            print elmsearch(allkeys[i],0)
-            newstring.append(chr(elmsearch(allkeys[i],0)+97))
-            #print elmsearch(allkeys[i],1)
+            print elmsearch(posskeys[i],0)
+            allkeys.append(chr(elmsearch(posskeys[i],0)+97))
+            #print elmsearch(posskeys[i],1)
 
-print ''.join(newstring)
+print ''.join(allkeys)
 
 #decryptors = []
 #pos=1
-#for i in range(len(allkeys)):
-#    print "i: " , allkeys[i]
-#    for j in range(len(allkeys[i])):
-#        print "j: " , allkeys[i]
-        #decryptors[pos].append([allkeys[i]])
+#for i in range(len(posskeys)):
+#    print "i: " , posskeys[i]
+#    for j in range(len(posskeys[i])):
+#        print "j: " , posskeys[i]
+        #decryptors[pos].append([posskeys[i]])
         #pos+=1
         #decryptors[pos].append[i]
 
 #print "decryptors: " , decryptors
 
-#for rows in allkeys:
-#    for cols in allkeys:
+#for rows in posskeys:
+#    for cols in posskeys:
 #        for elements in cols:
 #            print "r :" , rows, "e :" , elements
 
