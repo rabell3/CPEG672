@@ -93,6 +93,9 @@ def elmsearch(thislist,offset):
 
 
 def decode(keys, message):
+    decoded = []
+    winner = message
+    bigscore = 0
     for posskey in keys:
         #for i in range (0, keyshift):
         #    strip[i] = codedmessage[i::keyshift]
@@ -112,8 +115,14 @@ def decode(keys, message):
         #keyshift+=1
         #print keys
         posdecoded=''.join(posdecoded)
-        print posdecoded
-    return posdecoded
+#        print posdecoded
+        thisscore = fitsenglish(posdecoded)
+        if bigscore < thisscore:
+            winner = posdecoded
+            bigscore = thisscore
+    print "score " ,  bigscore , "winner \n" , winner
+    
+    return winner
 
 #----------------------------------------------------------------
 #---

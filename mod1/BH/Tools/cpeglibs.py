@@ -38,7 +38,7 @@ def fitsenglish(message):
     res = urllib2.urlopen('https://raw.githubusercontent.com/first20hours/google-10000-english/master/google-10000-english-usa.txt')
     words = res.read().split()
     
-    print "len before any:       \t" , len(message)
+#    print "len before any:       \t" , len(message)
 
     ourscore = 0
 
@@ -55,20 +55,20 @@ def fitsenglish(message):
         if thiscount > 0:
             ourscore+=thiscount*big_pts
         message=message.replace(word, '')
-    print "len after big cut:    \t" , len(message)
+#    print "len after big cut:    \t" , len(message)
 
     for word in longerwords:
         thiscount = message.count(word)
         if thiscount > 0:
             ourscore+=thiscount*long_pts
         message=message.replace(word, '')
-    print "len after longer cut: \t" , len(message)
+#    print "len after longer cut: \t" , len(message)
 
     for word in shortwords:
         thiscount = message.count(word)
         if thiscount > 0:
             ourscore+=thiscount*short_pts
         message=message.replace(word, '')
-    print "len after short cut: \t" , len(message)
+#    print "len after short cut: \t" , len(message)
 
     return ourscore
