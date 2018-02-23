@@ -123,18 +123,23 @@ for i in range(len(posskeys)):
 print "multicount: " , multicount
 allkeys = []
 
-for allofem in range(multicount**multicount):
+for p_cnt in range(1,multicount**multicount):
+    print p_cnt
+    permu = []
     for i in range(len(posskeys)):
         if len(posskeys[i]) == 1:
             print posskeys[i]
-            allkeys.append(chr(elmsearch(posskeys[i],0)+97))
+            permu.append(chr(elmsearch(posskeys[i],0)+97))
         else:
             #multicount+=1
             print elmsearch(posskeys[i],0)
-            allkeys.append(chr(elmsearch(posskeys[i],0)+97))
+            permu.append(chr(elmsearch(posskeys[i],0)+97))
             #print elmsearch(posskeys[i],1)
+    key = ''.join(permu)
+    print key
+    allkeys.append(key)
 
-print ''.join(allkeys)
+print len(allkeys)
 
 #decryptors = []
 #pos=1
