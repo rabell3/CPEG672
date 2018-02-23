@@ -1,4 +1,4 @@
-import sys, re, itertools, pickle
+import sys, re, itertools, pickle, random
 from collections import Counter
 from cpeglibs import *
 
@@ -91,6 +91,30 @@ def elmsearch(thislist,offset):
     #print thislist[offset]
     return thislist[offset]
 
+
+def decode(keys, message):
+    for posskey in keys:
+        #for i in range (0, keyshift):
+        #    strip[i] = codedmessage[i::keyshift]
+        #    ourkey=findkey(strip[i])
+        #    if ourkey != 0:
+        #        keys.append(ourkey)            
+        ##print keys
+        count = 0
+        posdecoded = []
+        while count < len(codedmessage):
+            c = codedmessage[count]
+            n = ord(posskey[count%len(posskey)])
+            #n = 26 - posskey[count%len(posskey)]
+            shifted = shiftBy(c, n)
+            posdecoded.append(shifted)
+            count+=1
+        #keyshift+=1
+        #print keys
+        posdecoded=''.join(posdecoded)
+        print posdecoded
+    return posdecoded
+
 #----------------------------------------------------------------
 #---
 #---  Main function
@@ -123,23 +147,32 @@ for i in range(len(posskeys)):
 print "multicount: " , multicount
 allkeys = []
 
-for p_cnt in range(1,multicount**multicount):
-    print p_cnt
+for p_cnt in range(multicount**multicount):
+    #print p_cnt
     permu = []
     for i in range(len(posskeys)):
         if len(posskeys[i]) == 1:
-            print posskeys[i]
+            #print posskeys[i]
             permu.append(chr(elmsearch(posskeys[i],0)+97))
         else:
-            #multicount+=1
-            print elmsearch(posskeys[i],0)
-            permu.append(chr(elmsearch(posskeys[i],0)+97))
-            #print elmsearch(posskeys[i],1)
+            flip = random.randint(0,1)
+            #print flip
+#            for j in range(len(posskeys[i])):
+#                copy = permu[:]
+#                copy.append(chr(elmsearch(posskeys[i],j)+97))
+                #multicount+=1
+                #print elmsearch(posskeys[i],0)
+            permu.append(chr(elmsearch(posskeys[i],flip)+97))
+    #            print elmsearch(posskeys[i],1)
+#                permu = copy
     key = ''.join(permu)
-    print key
+#    print key
     allkeys.append(key)
 
 print len(allkeys)
+unique = reduce(lambda l, x: l.append(x) or l if x not in l else l, allkeys, [])
+
+#print "Unique " , unique , "\t " , len(unique)
 
 #decryptors = []
 #pos=1
@@ -159,3 +192,5 @@ print len(allkeys)
 #            print "r :" , rows, "e :" , elements
 
 print "English score: " , ourscore
+
+decode(unique, codedmessage)
