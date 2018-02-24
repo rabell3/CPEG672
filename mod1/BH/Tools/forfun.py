@@ -10,4 +10,5 @@ englishtest = englishtest.lower()
 
 #print englishtest
 ourscore = fitsenglish(englishtest)
+message_stats(englishtest)
 print "English score: " , ourscore

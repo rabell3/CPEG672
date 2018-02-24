@@ -28,14 +28,10 @@ def attempt_break(message, key):
     print "message: -- \m" , message
     attempt = message
     for i in range(len(message)):
-        #print ord(message[i])
         ri = chr(ord(message[i]))
-        #print "ri " , ri
         for j in key:
             rj = chr(97+j)
-            #print "rj " , rj
-            attempt = attempt.replace(ri, rj)
-            #attempt = attempt.replace(pt, message[i])
+            attempt = attempt.replace(ri, message[j])
     #print attempt
     return attempt
 
@@ -53,11 +49,11 @@ print codedmessage
 #rotateall(codedmessage)
 attempt_score = 0
 
-pprint.pprint(normal_freqs)
+#pprint.pprint(normal_freqs)
 ourfreqs = findfreq(codedmessage)
 ourcounts = lettercount(codedmessage)
-pprint.pprint(ourfreqs)
-pprint.pprint(ourcounts)
+#pprint.pprint(ourfreqs)
+#pprint.pprint(ourcounts)
 
 
 #thiskey=newkey()
@@ -81,3 +77,4 @@ while (attempt_score < 500):
     print p , " \t" , attempt_score
 
 print "Winner: \n" , thisattempt , "\nScore: \t " , attempt_score , "\nthis key: \n" , thiskey
+message_stats(thisattempt)
