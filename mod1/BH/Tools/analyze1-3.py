@@ -120,9 +120,9 @@ def decode(keys, message):
         if bigscore < thisscore:
             winner = posdecoded
             bigscore = thisscore
-    print "score " ,  bigscore , "winner \n" , winner
-    
-    return winner
+    #print "score " ,  bigscore , "winner \n" , winner
+    winnertuple = winner , bigscore
+    return winnertuple
 
 #----------------------------------------------------------------
 #---
@@ -175,13 +175,13 @@ for p_cnt in range(multicount**multicount):
     #            print elmsearch(posskeys[i],1)
 #                permu = copy
     key = ''.join(permu)
-#    print key
+    print key
     allkeys.append(key)
 
 print len(allkeys)
 unique = reduce(lambda l, x: l.append(x) or l if x not in l else l, allkeys, [])
 
-#print "Unique " , unique , "\t " , len(unique)
+print "Unique " , unique , "\t " , len(unique)
 
 #decryptors = []
 #pos=1
@@ -202,4 +202,5 @@ unique = reduce(lambda l, x: l.append(x) or l if x not in l else l, allkeys, [])
 
 print "English score: " , ourscore
 
-decode(unique, codedmessage)
+winner, bigscore =decode(unique, codedmessage)
+print "score " ,  bigscore , "\nwinner \n" , winner
