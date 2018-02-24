@@ -27,6 +27,12 @@ def findfreq(message):
         frequency[chr(ascii)] = float(message.count(chr(ascii)))/len(message)
     return frequency
 
+def lettercount(message):
+    counts = {}
+    for ascii in range(ord('a'), ord('a')+26):
+        counts[chr(ascii)] = message.count(chr(ascii))
+    return counts
+
 def sumfreqs(message):
     frequency = findfreq(message)
     sum_freqs_squared = 0.0
@@ -49,10 +55,22 @@ def fitsenglish(message):
     longerwords = filter(lambda x: 8 >= len(x) > 5, words)
     bigwords = filter(lambda x: len(x) > 9, words)
 
-    short_pts = 1
+    bi_pts = 2
+    tri_pts = 3
+    short_pts = 5
     long_pts = 15
     big_pts = 100
 
+    for key in bigram_freqs:
+        thiscount = message.count(key)
+        if thiscount > 0:
+            ourscore+=thiscount*bi_pts
+
+    for key in trigram_freqs:
+        thiscount = message.count(key)
+        if thiscount > 0:
+            ourscore+=thiscount*tri_pts
+    print "blah : " , ourscore
     for word in bigwords:
         thiscount = message.count(word)
         if thiscount > 0:
