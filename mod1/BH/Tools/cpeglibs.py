@@ -67,6 +67,15 @@ def shiftBy(c, n):
 def randChar():
     return chr(random.randint(97, 122))
 
+def swap_chars(message, oldlet, newlet): 
+    message = message.replace(oldlet, newlet)
+    return ''.join(message)
+
+def twiddle_key(key, oldlet, newlet):
+    key = key.replace(oldlet, newlet,1)
+    key = key.replace(newlet, oldlet,1)
+    return ''.join(key)
+
 def message_stats(message):
     pprint.pprint(normal_freqs)
     ourfreqs = findfreq(message)
