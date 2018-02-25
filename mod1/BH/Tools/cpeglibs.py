@@ -67,25 +67,6 @@ def findngrams(message):
     ngramtuple = bicount, tricount, quadcount
     return ngramtuple
 
-def findbigs(message):
-    bi_pts = 2
-    for key in bigram_freqs:
-        thiscount = message.count(key)
-    return thiscount
-
-def findlong(message):
-    bi_pts = 2
-    for key in bigram_freqs:
-        thiscount = message.count(key)
-    return thiscount
-
-def findshort(message):
-    bi_pts = 2
-    for key in bigram_freqs:
-        thiscount = message.count(key)
-    return thiscount
-
-
 def fitsenglish(message):
     res = urllib2.urlopen('https://raw.githubusercontent.com/first20hours/google-10000-english/master/google-10000-english-usa.txt')
     words = res.read().split()
@@ -100,25 +81,25 @@ def fitsenglish(message):
 
     bi_pts = 2
     tri_pts = 3
+    quad_pts = 4
     short_pts = 5
     long_pts = 15
     big_pts = 100
 
-    for key in bigram_freqs:
-        thiscount = message.count(key)
-        if thiscount > 0:
-            ourscore+=thiscount*bi_pts
+    bicount , tricount, quadcount = findngrams(message)
+    biscore = bicount*bi_pts
+    triscore = tricount*tri_pts
+    quadscore = quadcount*quad_pts
 
-    for key in trigram_freqs:
-        thiscount = message.count(key)
-        if thiscount > 0:
-            ourscore+=thiscount*tri_pts
+    ourscore = biscore + triscore + quadscore
 
+    print message
     for word in bigwords:
         thiscount = message.count(word)
         if thiscount > 0:
             ourscore+=thiscount*big_pts
         message=message.replace(word, '')
+#        print word , " - " , thiscount
 #    print "len after big cut:    \t" , len(message)
 
     for word in longerwords:
@@ -126,6 +107,7 @@ def fitsenglish(message):
         if thiscount > 0:
             ourscore+=thiscount*long_pts
         message=message.replace(word, '')
+#        print word , " - " , thiscount
 #    print "len after longer cut: \t" , len(message)
 
     for word in shortwords:
@@ -133,6 +115,7 @@ def fitsenglish(message):
         if thiscount > 0:
             ourscore+=thiscount*short_pts
         message=message.replace(word, '')
+#        print word , " - " , thiscount
 #    print "len after short cut: \t" , len(message)
 
     return ourscore
