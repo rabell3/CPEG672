@@ -1,4 +1,4 @@
-import sys, re, urllib2, itertools, pprint
+import sys, re, urllib2, itertools, pprint, random
 from collections import Counter
 
 #bi- and tri-gram frequencies from https://www3.nd.edu/~busiforc/handouts/cryptography/Letter%20Frequencies.html#Most_common_bigrams_.28in_order.29
@@ -28,6 +28,26 @@ def findfreq(message):
         frequency[chr(ascii)] = float(message.count(chr(ascii)))/len(message)
     return frequency
 
+def findkey(message):
+    frequency = {}
+    return_key = 0
+    for ascii in range(ord('a'), ord('a')+26):
+        frequency[chr(ascii)] = float(message.count(chr(ascii)))/len(message)
+
+    sum_freqs_squared = 0.0
+    for ltr in frequency:
+        sum_freqs_squared += frequency[ltr]*frequency[ltr]
+
+    for possible_key in range(1, 26):
+        sum_f_sqr = 0.0
+        for ltr in normal_freqs:
+            caesar_guess = shiftBy(ltr, possible_key)
+            sum_f_sqr += normal_freqs[ltr]*frequency[caesar_guess]
+        if abs(sum_f_sqr - .065) < .005:
+            return_key = possible_key
+            print "Key is probably: ", possible_key, " f_sqr is ",sum_f_sqr
+    return return_key
+
 def lettercount(message):
     counts = {}
     for ascii in range(ord('a'), ord('a')+26):
@@ -43,6 +63,9 @@ def sumfreqs(message):
 
 def shiftBy(c, n):
     return chr(((ord(c) - ord('a') + n) % 26) + ord('a'))
+
+def randChar():
+    return chr(random.randint(97, 122))
 
 def message_stats(message):
     pprint.pprint(normal_freqs)
@@ -65,11 +88,11 @@ def findngrams(message):
     for key in quadgram_freqs:
         quadcount = message.count(key)
     ngramtuple = bicount, tricount, quadcount
+#    print ngramtuple
     return ngramtuple
 
-def fitsenglish(message):
-    res = urllib2.urlopen('https://raw.githubusercontent.com/first20hours/google-10000-english/master/google-10000-english-usa.txt')
-    words = res.read().split()
+def fitsenglish(message, engsrc):
+    words = engsrc.read().split()
     
 #    print "len before any:       \t" , len(message)
 
@@ -93,13 +116,14 @@ def fitsenglish(message):
 
     ourscore = biscore + triscore + quadscore
 
-    print message
+#    print message
     for word in bigwords:
         thiscount = message.count(word)
         if thiscount > 0:
             ourscore+=thiscount*big_pts
         message=message.replace(word, '')
-#        print word , " - " , thiscount
+        if thiscount != 0:
+            print word , " - " , thiscount
 #    print "len after big cut:    \t" , len(message)
 
     for word in longerwords:
@@ -107,7 +131,8 @@ def fitsenglish(message):
         if thiscount > 0:
             ourscore+=thiscount*long_pts
         message=message.replace(word, '')
-#        print word , " - " , thiscount
+        if thiscount != 0:
+            print word , " - " , thiscount
 #    print "len after longer cut: \t" , len(message)
 
     for word in shortwords:
@@ -115,7 +140,7 @@ def fitsenglish(message):
         if thiscount > 0:
             ourscore+=thiscount*short_pts
         message=message.replace(word, '')
-#        print word , " - " , thiscount
+        if thiscount != 0:
+            print word , " - " , thiscount
 #    print "len after short cut: \t" , len(message)
-
     return ourscore
