@@ -2,11 +2,6 @@ import sys, re, itertools, pickle, random, pprint, os
 from collections import Counter,OrderedDict
 from cpeglibs import *
 
-def replaceit(nc):
-    oldchar = chr(nc) #old letter
-#        while newchar in listchars:
-    return chr(random.randint(97,122))
-
 def findourstats(codedmessage):
     codefreq = findfreq(codedmessage)
     normfreq = normal_freqs
@@ -24,6 +19,24 @@ def findourstats(codedmessage):
     print codefreq
     return
 
+def seedkey(message):
+    normfreq = normal_freqs
+    codefreq = findfreq(codedmessage)
+    normfreq=sorted(normfreq.iteritems(), key=lambda (k,v): (v,k),reverse=True)
+    codefreq=sorted(codefreq.iteritems(), key=lambda (k,v): (v,k),reverse=True)
+    newkey=[]
+    newchar=''
+
+    for i in range(10):
+        oldc, cstat = codefreq[i]
+        newc, nstat = normfreq[i]
+        newkey.append(newc)
+    while len(newkey) < 26:
+        newchar = chr(random.randint(97,122))
+        if newchar not in newkey:
+            newkey.append(newchar)
+    return ''.join(newkey)
+
 #------------------------------------------------------------------------------------------------------------
 #----
 #----
@@ -38,17 +51,22 @@ codefreq = findfreq(codedmessage)
 normfreq=sorted(normfreq.iteritems(), key=lambda (k,v): (v,k),reverse=True)
 codefreq=sorted(codefreq.iteritems(), key=lambda (k,v): (v,k),reverse=True)
 
-#findourstats(codedmessage)
+findourstats(codedmessage)
 
 letters = range(26)
 random.shuffle(letters)
 
 print codedmessage
 
-for i in range(26):
-    oldc, cstat = codefreq[i]
-    newc, nstat = normfreq[i]
-    print oldc , " -> " , newc
-    decoded = codedmessage.replace(oldc, newc)
+decoded = codedmessage
+#for i in range(26):
+#    oldc, cstat = codefreq[i]
+#    newc, nstat = normfreq[i]
+#    print oldc , " -> " , newc
+#    decoded =  swap_chars(decoded, oldc, newc)
+#    print decoded
 
-print decoded
+#print "coded: " , codedmessage
+
+print seedkey(codedmessage)
+print "decoded: " , decoded
