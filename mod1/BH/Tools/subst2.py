@@ -20,6 +20,22 @@ def seedkey(message):
             newkey.append(newchar)
     return ''.join(newkey)
 
+def attempt_break(message, key, engsrc):
+    cnt = 0
+    attempt = message
+    listchars=[]
+    newchar = ''
+    while cnt <26:
+        oldchar = chr(cnt+97) #old letter
+        while newchar in listchars:
+            newchar = chr(random.randint(97,122))
+        swap_chars(message, oldchar, newchar)
+        cnt+=1
+        listchars.append(newchar)
+    score = fitsenglish(attempt, engsrc)
+    results = attempt, score
+    return results
+
 #------------------------------------------------------------------------------------------------------------
 #----
 #----
@@ -28,12 +44,41 @@ engsrc = urllib2.urlopen('https://raw.githubusercontent.com/first20hours/google-
 fh=sys.argv[1]
 codedmessage=readfile(fh)
 
-#findourstats(codedmessage)
-thiskey = seedkey(codedmessage)
+bestkey=seedkey(codedmessage)
+thisattempt = []
+thisscore = 0
+bestscore = 0
+p=0 # number of passes through the whole shebang
 
 print "encoded: " , codedmessage
-
 decoded = codedmessage
 
-print "seedkey: " , seedkey(codedmessage)
+while thisscore < 500 and p<10000:
+    thiskey = bestkey
+    thisattempt,thisscore = attempt_break(str(decoded), thiskey, engsrc)
+
+#    print "thisattempt : " , thisattempt
+#    print thisscore
+
+    if thisscore > bestscore:
+        print thiskey
+        print bestkey
+        bestscore = thisscore
+        bestkey = thiskey
+        decoded = thisattempt
+#        print "hi"
+    else:
+        oc = chr(random.randint(0,25)+97)
+        nc = chr(random.randint(0,25)+97)
+#        print oc
+#        print nc
+#        print "Aw"
+        thiskey=twiddle_key(bestkey, oc, nc)
+
+#    decoded = thisattempt
+    p+=1
+
+
+
+print "seedkey: " , bestkey
 print "decoded: " , decoded
