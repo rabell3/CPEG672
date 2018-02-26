@@ -44,18 +44,18 @@ engsrc = urllib2.urlopen('https://raw.githubusercontent.com/first20hours/google-
 fh=sys.argv[1]
 codedmessage=readfile(fh)
 
-bestkey=seedkey(codedmessage)
+bestkey=thiskey=seedkey(codedmessage)
 thisattempt = []
 thisscore = 0
 bestscore = 0
 p=0 # number of passes through the whole shebang
 
 print "encoded: " , codedmessage
-decoded = codedmessage
+#decoded = codedmessage
 
 while thisscore < 500 and p<10000:
-    thiskey = bestkey
-    thisattempt,thisscore = attempt_break(str(decoded), thiskey, engsrc)
+    #thiskey = bestkey
+    thisattempt,thisscore = attempt_break(str(codedmessage), thiskey, engsrc)
 
 #    print "thisattempt : " , thisattempt
 #    print thisscore
@@ -65,7 +65,7 @@ while thisscore < 500 and p<10000:
         print bestkey
         bestscore = thisscore
         bestkey = thiskey
-        decoded = thisattempt
+        codedmessage = thisattempt
 #        print "hi"
     else:
         oc = chr(random.randint(0,25)+97)
@@ -74,11 +74,10 @@ while thisscore < 500 and p<10000:
 #        print nc
 #        print "Aw"
         thiskey=twiddle_key(bestkey, oc, nc)
-
-#    decoded = thisattempt
+#    codedmessage = thisattempt
     p+=1
 
 
 
 print "seedkey: " , bestkey
-print "decoded: " , decoded
+print "decoded: " , codedmessage
