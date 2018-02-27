@@ -40,7 +40,7 @@ def attempt_break(message, key, engsrc):
     cnt=0
     listchars=[]
     while cnt<26:
-        oldchar=0
+        oldchar=chr(cnt)
         for letter in key:
             #if (letter in listchars) or (oldchar in listchars):
             oldchar = chr(random.randint(97,122))
