@@ -3,3 +3,4 @@ settings.json
 *.pdf
 *.txt
 *.odt
+!email*.txt
