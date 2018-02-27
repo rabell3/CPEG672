@@ -36,19 +36,19 @@ def attempt_break(message, key, engsrc):
     results = attempt, score
     return results
 """
-def attempt_break(message, key, engsrc):
+def attempt_break(message, oc, nc, engsrc):
     cnt=0
     listchars=[]
+    key=twiddle_key(bestkey, oc, nc)
     while cnt<26:
-        oldchar=chr(cnt)
         for letter in key:
             #if (letter in listchars) or (oldchar in listchars):
             oldchar = chr(random.randint(97,122))
-            for letter in key:
-                attempt=swap_chars(message, oldchar, letter)
+            #for letter in key:
+            attempt=swap_chars(message, oldchar, letter)
         cnt+=1
     score = fitsenglish(attempt, engsrc)
-    results = attempt, score
+    results = attempt, score, key
     return results
 
 #------------------------------------------------------------------------------------------------------------
@@ -70,10 +70,10 @@ print "encoded: " , codedmessage
 
 oc=""
 nc=""
-while thisscore < 500 and p<10000:
+while thisscore < 300 and p<10000:
     #thiskey = bestkey
-    thiskey=twiddle_key(bestkey, oc, nc)
-    thisattempt, thisscore = attempt_break(str(codedmessage), thiskey, engsrc)
+    #thiskey=twiddle_key(bestkey, oc, nc)
+    thisattempt, thisscore, thiskey = attempt_break(str(codedmessage), oc, nc, engsrc)
 
     print "thisattempt : " , thisattempt
     print thisscore
