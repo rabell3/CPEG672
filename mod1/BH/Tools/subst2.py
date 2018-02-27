@@ -19,7 +19,7 @@ def seedkey(message):
         if newchar not in newkey:
             newkey.append(newchar)
     return ''.join(newkey)
-
+"""
 def attempt_break(message, key, engsrc):
     cnt = 0
     attempt = message
@@ -29,9 +29,24 @@ def attempt_break(message, key, engsrc):
         oldchar = chr(cnt+97) #old letter
         while newchar in listchars:
             newchar = chr(random.randint(97,122))
-        swap_chars(message, oldchar, newchar)
+        attempt=swap_chars(attempt, oldchar, newchar)
         cnt+=1
         listchars.append(newchar)
+    score = fitsenglish(attempt, engsrc)
+    results = attempt, score
+    return results
+"""
+def attempt_break(message, key, engsrc):
+    cnt=0
+    listchars=[]
+    while cnt<26:
+        oldchar=0
+        for letter in key:
+            #if (letter in listchars) or (oldchar in listchars):
+            oldchar = chr(random.randint(97,122))
+            for letter in key:
+                attempt=swap_chars(message, oldchar, letter)
+        cnt+=1
     score = fitsenglish(attempt, engsrc)
     results = attempt, score
     return results
@@ -53,27 +68,31 @@ p=0 # number of passes through the whole shebang
 print "encoded: " , codedmessage
 #decoded = codedmessage
 
+oc=""
+nc=""
 while thisscore < 500 and p<10000:
     #thiskey = bestkey
-    thisattempt,thisscore = attempt_break(str(codedmessage), thiskey, engsrc)
+    thiskey=twiddle_key(bestkey, oc, nc)
+    thisattempt, thisscore = attempt_break(str(codedmessage), thiskey, engsrc)
 
-#    print "thisattempt : " , thisattempt
-#    print thisscore
+    print "thisattempt : " , thisattempt
+    print thisscore
+    print thiskey
 
     if thisscore > bestscore:
-        print thiskey
-        print bestkey
+#        print thiskey
+#        print bestkey
         bestscore = thisscore
         bestkey = thiskey
         codedmessage = thisattempt
-#        print "hi"
+        print " ** New bestkey ** " , bestkey
     else:
         oc = chr(random.randint(0,25)+97)
         nc = chr(random.randint(0,25)+97)
 #        print oc
 #        print nc
 #        print "Aw"
-        thiskey=twiddle_key(bestkey, oc, nc)
+        
 #    codedmessage = thisattempt
     p+=1
 
