@@ -36,10 +36,10 @@ def attempt_break(message, key, engsrc):
     results = attempt, score
     return results
 """
-def attempt_break(message, oc, nc, engsrc):
+def attempt_break(message, key, engsrc):
     cnt=0
     listchars=[]
-    key=twiddle_key(bestkey, oc, nc)
+#    key=twiddle_key(bestkey, oc, nc)
     while cnt<26:
         for letter in key:
             #if (letter in listchars) or (oldchar in listchars):
@@ -48,8 +48,29 @@ def attempt_break(message, oc, nc, engsrc):
             attempt=swap_chars(message, oldchar, letter)
         cnt+=1
     score = fitsenglish(attempt, engsrc)
-    results = attempt, score, key
+    results = attempt, score
     return results
+
+def twiddle_key(key):
+    crapletters=['']
+    oldlet=newlet=''
+
+#    print "HIYATHERE"
+#    print crapletters
+    if oldlet in crapletters:
+#        print "hi"
+        oldlet = chr(random.randint(0,25)+97)
+        crapletters.append(oldlet)
+    if newlet in crapletters:
+#        print "hello"
+        newlet = chr(random.randint(0,25)+97)
+        crapletters.append(newlet)
+
+    key = key.replace(oldlet, newlet,1)
+    key = key.replace(newlet, oldlet,1)
+    return ''.join(key)
+
+
 
 #------------------------------------------------------------------------------------------------------------
 #----
@@ -63,23 +84,25 @@ bestkey=thiskey=seedkey(codedmessage)
 thisattempt = []
 thisscore = 0
 bestscore = 0
+attemptedkeys = ['']
 p=0 # number of passes through the whole shebang
 
 print "encoded: " , codedmessage
 #decoded = codedmessage
 
-crapletters=[]
-oc=''
-nc=''
+##crapletters=['']
+##oc=''
+##nc=''
 while thisscore < 300 and p<10000:
     #thiskey = bestkey
     #thiskey=twiddle_key(bestkey, oc, nc)
-    thisattempt, thisscore, thiskey = attempt_break(str(codedmessage), oc, nc, engsrc)
+    thisattempt, thisscore = attempt_break(str(codedmessage), thiskey, engsrc)
 
     print "thisattempt : " , thisattempt
     print thisscore
     print thiskey
-
+#    print crapletters
+    attemptedkeys.append(thiskey)
     if thisscore >= bestscore:
 #        print thiskey
 #        print bestkey
@@ -88,19 +111,13 @@ while thisscore < 300 and p<10000:
         codedmessage = thisattempt
         print " ** New bestkey ** " , bestkey
     else:
-        print "HIYATHERE"
-        if oc in crapletters:
-            print "hi"
-            oc = chr(random.randint(0,25)+97)
-            crapletters.append(oc)
-        if nc in crapletters:
-            print "hello"
-            nc = chr(random.randint(0,25)+97)
-            crapletters.append(nc)
+        while thiskey in attemptedkeys:
+            thiskey=twiddle_key(bestkey)
 #        print oc
 #        print nc
 #        print "Aw"
-        
+    
+#    print attemptedkeys
 #    codedmessage = thisattempt
     p+=1
 
