@@ -68,8 +68,9 @@ p=0 # number of passes through the whole shebang
 print "encoded: " , codedmessage
 #decoded = codedmessage
 
-oc=""
-nc=""
+crapletters=[]
+oc=''
+nc=''
 while thisscore < 300 and p<10000:
     #thiskey = bestkey
     #thiskey=twiddle_key(bestkey, oc, nc)
@@ -79,7 +80,7 @@ while thisscore < 300 and p<10000:
     print thisscore
     print thiskey
 
-    if thisscore > bestscore:
+    if thisscore >= bestscore:
 #        print thiskey
 #        print bestkey
         bestscore = thisscore
@@ -87,8 +88,15 @@ while thisscore < 300 and p<10000:
         codedmessage = thisattempt
         print " ** New bestkey ** " , bestkey
     else:
-        oc = chr(random.randint(0,25)+97)
-        nc = chr(random.randint(0,25)+97)
+        print "HIYATHERE"
+        if oc in crapletters:
+            print "hi"
+            oc = chr(random.randint(0,25)+97)
+            crapletters.append(oc)
+        if nc in crapletters:
+            print "hello"
+            nc = chr(random.randint(0,25)+97)
+            crapletters.append(nc)
 #        print oc
 #        print nc
 #        print "Aw"
