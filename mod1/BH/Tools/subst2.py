@@ -19,6 +19,11 @@ def seedkey(message):
         if newchar not in newkey:
             newkey.append(newchar)
     return ''.join(newkey)
+
+def find_nth_frequent_ltr(freqs, num):
+    sortedfreq=sorted(freqs.iteritems(), key=lambda (k,v): (v,k),reverse=True)
+    return sortedfreq[num]
+
 """
 def attempt_break(message, key, engsrc):
     cnt = 0
@@ -37,16 +42,11 @@ def attempt_break(message, key, engsrc):
     return results
 """
 def attempt_break(message, key):
-    cnt=0
-    listchars=[]
-#    key=twiddle_key(bestkey, oc, nc)
-    for key_letter in key:
-        for msg_letter in message:
-            #if (letter in listchars) or (oldchar in listchars):
-            #oldchar = chr(random.randint(97,122))
-            #for letter in key:
-            attempt=swap_chars(message, msg_letter, key_letter)
-    return attempt
+    for i in range(26):
+        newlet, nfreq = find_nth_frequent_ltr(normal_freqs,i)
+        oldlet, oldfreq = find_nth_frequent_ltr(findfreq(message),i)
+        message = swap_chars(message, oldlet, newlet)
+    return message
 
 def twiddle_key(key):
     crapletters=['']
@@ -90,29 +90,39 @@ print "encoded: " , codedmessage
 ##crapletters=['']
 ##oc=''
 ##nc=''
-while thisscore < 300 and p<10000:
+#####for i in range(26):
+#####    print find_nth_frequent_ltr(normal_freqs, i)
+#####    print find_nth_frequent_ltr(findfreq(codedmessage), i)
+#####thisscore = 301
+while thisscore < 500 and p<1000000:
+    c=0
     #thiskey = bestkey
     #thiskey=twiddle_key(bestkey, oc, nc)
+    print "Attempting..."
     thisattempt = attempt_break(str(codedmessage), thiskey)
     attemptedkeys.append(thiskey)
+    print "Num attempted keys: " , len(attemptedkeys)
     print "thisattempt : " , thisattempt
     thisscore = fitsenglish(thisattempt, engsrc)
 
-    print thisscore
+    print "Best score: \t" , bestscore , "This score: \t" , thisscore
 #    print crapletters
     if thisscore >= bestscore:
 #        print thiskey
 #        print bestkey
         bestscore = thisscore
         bestkey = thiskey
-        codedmessage = thisattempt
+#        codedmessage = thisattempt
         print " ** New bestkey ** " , bestkey
     else:
         while thiskey in attemptedkeys:
+            c+=1
             thiskey=twiddle_key(bestkey)
-            print thiskey
+#            print thiskey
+#            print "Dupe: " , c
 #        print "Aw"
-    
+    thiskey=twiddle_key(bestkey)
+#    print thiskey
 #    print attemptedkeys
 #    codedmessage = thisattempt
     p+=1
