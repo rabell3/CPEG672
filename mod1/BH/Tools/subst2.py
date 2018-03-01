@@ -36,20 +36,17 @@ def attempt_break(message, key, engsrc):
     results = attempt, score
     return results
 """
-def attempt_break(message, key, engsrc):
+def attempt_break(message, key):
     cnt=0
     listchars=[]
 #    key=twiddle_key(bestkey, oc, nc)
-    while cnt<26:
-        for letter in key:
+    for key_letter in key:
+        for msg_letter in message:
             #if (letter in listchars) or (oldchar in listchars):
-            oldchar = chr(random.randint(97,122))
+            #oldchar = chr(random.randint(97,122))
             #for letter in key:
-            attempt=swap_chars(message, oldchar, letter)
-        cnt+=1
-    score = fitsenglish(attempt, engsrc)
-    results = attempt, score
-    return results
+            attempt=swap_chars(message, msg_letter, key_letter)
+    return attempt
 
 def twiddle_key(key):
     crapletters=['']
@@ -96,13 +93,13 @@ print "encoded: " , codedmessage
 while thisscore < 300 and p<10000:
     #thiskey = bestkey
     #thiskey=twiddle_key(bestkey, oc, nc)
-    thisattempt, thisscore = attempt_break(str(codedmessage), thiskey, engsrc)
-
-    print "thisattempt : " , thisattempt
-    print thisscore
-    print thiskey
-#    print crapletters
+    thisattempt = attempt_break(str(codedmessage), thiskey)
     attemptedkeys.append(thiskey)
+    print "thisattempt : " , thisattempt
+    thisscore = fitsenglish(thisattempt, engsrc)
+
+    print thisscore
+#    print crapletters
     if thisscore >= bestscore:
 #        print thiskey
 #        print bestkey
@@ -113,8 +110,7 @@ while thisscore < 300 and p<10000:
     else:
         while thiskey in attemptedkeys:
             thiskey=twiddle_key(bestkey)
-#        print oc
-#        print nc
+            print thiskey
 #        print "Aw"
     
 #    print attemptedkeys
