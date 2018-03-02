@@ -45,7 +45,7 @@ def attempt_break(message, key):
     for i in range(26):
         newlet, nfreq = find_nth_frequent_ltr(normal_freqs,i)
         oldlet, oldfreq = find_nth_frequent_ltr(findfreq(message),i)
-        message = swap_chars(message, oldlet, newlet)
+        message = swap_chars(message, oldlet, key[i])
     return message
 
 def twiddle_key(key):
@@ -115,9 +115,9 @@ while thisscore < 500 and p<1000000:
 #        codedmessage = thisattempt
         print " ** New bestkey ** " , bestkey
     else:
-        while thiskey in attemptedkeys:
-            c+=1
-            thiskey=twiddle_key(bestkey)
+        #while thiskey in attemptedkeys:
+        c+=1
+        thiskey=twiddle_key(bestkey)
 #            print thiskey
 #            print "Dupe: " , c
 #        print "Aw"
