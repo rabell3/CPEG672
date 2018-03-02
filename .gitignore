@@ -1,5 +1,6 @@
 *prof*
 settings.json
+.pylintrc
 *.pdf
 *.txt
 *.odt
