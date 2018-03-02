@@ -11,7 +11,7 @@ def col_trans(plain):
 
 def ciph_trans(cipher):
     #cols = random.randint(8,10)
-    cols = 8
+    cols = 9
     key = range(cols)
     random.shuffle(key)
     return "".join(cipher[i::cols].lower() for i in key), key
