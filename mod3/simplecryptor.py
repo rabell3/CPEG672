@@ -30,13 +30,7 @@ def encrypt(plaintext, key):
     return cipher_as_hex
 
 def decrypt(enciphered, key):
-    enchxd = binascii.hexlify(enciphered)
-    encunh = binascii.unhexlify(enchxd)
-    encint = encunh
-    
-    print encint
-
-    plain_as_int = int(encint, 16) ^ int(key, 16)
+    plain_as_int = int(enciphered, 16) ^ int(key, 16)
     plain_as_hex = format(plain_as_int, 'x')
 
     print plain_as_int
@@ -49,9 +43,9 @@ def decrypt(enciphered, key):
 # --------------------------------------------------------------------------------
 mode = sys.argv[1]
 phired = sys.argv[2]
-
-ourseed = 1983
-hexkey = keygen(ourseed)
+seedval = int(sys.argv[3])
+#seedval = 1983
+hexkey = keygen(seedval)
 
 if mode == "e" and len(phired) > 0:
     print "Encrypting...\n"
