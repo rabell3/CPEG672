@@ -16,21 +16,19 @@ def crand(seed):
         r.append(next)
         yield (next >> 1 if next < 2**32 else (next - 2**32) >> 1)
 
-def keygen(seed, nonce):
-    mygen = crand(seed)
-    if nonce == '':
-        nonce = os.urandom(6)
-        hexnonce = binascii.hexlify(nonce)
-    else:
-        hexnonce = binascii.hexlify(nonce)
-    rands = [mygen.next() for i in range(4)]
-    concatenated_hex = hexnonce + format(seed, 'x')
+def getnewseed(orig_seed, nonce):
+    hexnonce = binascii.hexlify(nonce)
+    oursecret = orig_seed
+    concatenated_hex = hexnonce + format(oursecret, 'x')
     even_length = concatenated_hex.rjust(len(concatenated_hex) + len(concatenated_hex) % 2, '0')
     hexhash = hashlib.sha256(binascii.unhexlify(even_length)).hexdigest()
-    hexhash = binascii.hexlify(hexhash)
-    key = "".join(map(lambda x: format(x, 'x')[-6:], hexhash))
-    return key
+    newseed = (int(hexhash, 16)) % 2**32
+    return newseed
 
+def keygen(seed):
+    mygen = crand(seed)
+    rands = [mygen.next() for i in range(4)]
+    return "".join(map(lambda x: format(x, 'x')[-6:], rands))
 
 def encrypt(plaintext, key):
     hexplain = binascii.hexlify(plaintext)
@@ -64,11 +62,13 @@ if mode == "e" and len(phired) > 0:
     print "encoded:\t" , encoded
     exit
 elif mode == "d" and len(phired) > 0:
-    ournonce=phired[0:12]
-    ourcrypt=phired[12:]
-    hexkey = keygen(seedval,ournonce)
-    print "Decrypting with nonce %s...\n" , ournonce
-    decoded = decrypt(phired, hexkey)
+    ournonce = phired[0:12]
+    ourcrypt = phired[12:]
+#    print len(ourcrypt)
+    ourseed = getnewseed(seedval,ournonce)
+    hexkey = keygen(ourseed)
+    print "Decrypting with nonce %s...\n" % ournonce
+    decoded = decrypt(ourcrypt, hexkey)
     print "cipher:  \t" , ourcrypt
     print "key:    \t" , hexkey
     print "decoded:\t" , decoded
@@ -76,22 +76,4 @@ elif mode == "d" and len(phired) > 0:
 
 if len(phired) <= 0:
     print "Enter text to encipher or decipher.\n"
-
-
-#----------------------------------------------------------------------------------------------------------------------
-
-#nonce = os.urandom(6)
-nonce = "cc4304c09aee"
-hexnonce = binascii.hexlify(nonce)
-oursecret = 61983
-
-
-
-
-"3e08816f1377f89f1c596fc197dd52946c92577bfd7c25c3"
-
-newseed = (int(hexhash, 16)) % 2**32
-print newseed
-
-
-
+    
