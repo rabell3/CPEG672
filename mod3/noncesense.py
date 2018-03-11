@@ -25,9 +25,11 @@ def getnewseed(orig_seed, nonce):
     newseed = (int(hexhash, 16)) % 2**32
     return newseed
 
-def keygen(seed):
+def keygen(seed, num):
+    #num = 4
     mygen = crand(seed)
-    rands = [mygen.next() for i in range(4)]
+    rands = [mygen.next() for i in range(num)]
+    print rands
     return "".join(map(lambda x: format(x, 'x')[-6:], rands))
 
 def encrypt(plaintext, key):
@@ -39,34 +41,38 @@ def encrypt(plaintext, key):
 def decrypt(enciphered, key):
     plain_as_int = int(enciphered, 16) ^ int(key, 16)
     plain_as_hex = format(plain_as_int, 'x')
-    print plain_as_int
-    print plain_as_hex
-    return binascii.unhexlify(plain_as_hex)
+    print "plain \t\t", plain_as_int
+    print "hexed \t\t", plain_as_hex
+    decrypted = binascii.unhexlify(plain_as_hex)
+    return decrypted
 
 # --------------------------------------------------------------------------------
 # --
 # --
 # --------------------------------------------------------------------------------
 mode = sys.argv[1]
-phired = sys.argv[2]
+inputted = sys.argv[2]
 seedval = int(sys.argv[3])
 #seedval = 1983
 
+print inputted
+print seedval
 
-if mode == "e" and len(phired) > 0:
+if mode == "e" and len(inputted) > 0:
     hexkey = keygen(seedval,'')
     print "Encrypting...\n"
-    encoded = encrypt(phired, hexkey)
-    print "input:  \t" , phired
+    encoded = encrypt(inputted, hexkey)
+    print "input:  \t" , inputted
     print "key:    \t" , hexkey
     print "encoded:\t" , encoded
     exit
-elif mode == "d" and len(phired) > 0:
-    ournonce = phired[0:12]
-    ourcrypt = phired[12:]
+elif mode == "d" and len(inputted) > 0:
+    ournonce = inputted[0:12]
+    ourcrypt = inputted[12:]
+    ourcryptlen = len(ourcrypt)
 #    print len(ourcrypt)
     ourseed = getnewseed(seedval,ournonce)
-    hexkey = keygen(ourseed)
+    hexkey = keygen(ourseed,ourcryptlen/4)
     print "Decrypting with nonce %s...\n" % ournonce
     decoded = decrypt(ourcrypt, hexkey)
     print "cipher:  \t" , ourcrypt
@@ -74,6 +80,5 @@ elif mode == "d" and len(phired) > 0:
     print "decoded:\t" , decoded
     exit
 
-if len(phired) <= 0:
+if len(inputted) <= 0:
     print "Enter text to encipher or decipher.\n"
-    
