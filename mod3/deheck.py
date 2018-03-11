@@ -3,12 +3,12 @@ from Crypto import Random
 from Crypto.Cipher import AES
 from Crypto.Util import Counter
 
-aesmode = sys.argv[1]
-password = sys.argv[2]
-imagein = sys.argv[3]
-imageout = sys.argv[4]
 
-im = Image.open(imagein)
+password = sys.argv[1]
+imagein = sys.argv[2]
+imageout = sys.argv[3]
+
+im = Image.open(imagefile)
 #im = Image.open('mathcat.png')
 im_arr = im.load()
 im_str = im.tobytes()
@@ -24,14 +24,8 @@ ourkey = hashlib.sha256(password).digest()
 ourIV = os.urandom(AES.block_size)
 print binascii.hexlify(ourIV)
 ctr = Counter.new(128)
-
-if aesmode == 'ECB':
-    ouraes = AES.new(ourkey, AES.MODE_ECB)
-elif aesmode == 'CTR':
-    ouraes = AES.new(ourkey, AES.MODE_CTR, counter=ctr)
-else:
-    print "I don't speak spanish.\n"
-    exit (1)
+#ouraes = AES.new(ourkey, AES.MODE_ECB, ourIV)
+ouraes = AES.new(ourkey, AES.MODE_CTR, counter=ctr)
 
 im_enc = ourIV + ouraes.encrypt(im_str)
 
