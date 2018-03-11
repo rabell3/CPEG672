@@ -9,3 +9,4 @@ I am by no means a legitimate programmer, so if you choose to use any of this, d
 - http://prof.ninja
 - https://udcapture.udel.edu/2018s/cpeg472-010
 - https://projecteuler.net
+- https://learnxinyminutes.com/docs/python/
