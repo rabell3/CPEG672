@@ -130,6 +130,7 @@ if action == "encrypt":
         print "CFB"
     elif aesmode == "CBC":
         print "CBC"
+        im_str = fixpadding(im_str) 
         # Deal with IV status
         if type(inIV) == type(None):
             ourIV = binascii.hexlify(os.urandom(AES.block_size))[:16]
@@ -167,6 +168,7 @@ elif action == "decrypt":
         print "CFB"
     elif aesmode == "CBC":
         print "CBC"
+        im_str = fixpadding(im_str) 
         # Deal with IV status
         if type(inIV) == type(None):
             print "Can't decrypt without known IV."
