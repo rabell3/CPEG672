@@ -124,7 +124,7 @@ if action == "encrypt":
         processed = encryptECB(im_str, ourkey)
     elif aesmode == "CTR":
         print "CTR"
-        im_str = fixpadding(im_str)        
+        im_str = fixpadding(im_str)
         processed = encryptCTR(im_str, ourkey)
     elif aesmode == "CFB":
         print "CFB"
@@ -146,6 +146,7 @@ if action == "encrypt":
         else:
             ourIV = inIV
         print "Our IV: " , ourIV, "\tLen\t" , len(ourIV)
+        im_str = fixpadding(im_str)
         processed = encryptOFB(im_str, ourkey, ourIV)
 elif action == "decrypt":
     print "Decrypting..."
@@ -178,6 +179,7 @@ elif action == "decrypt":
         processed = decryptCBC(im_str, ourkey, ourIV)
     elif aesmode == "OFB":
         print "OFB"
+        im_str = fixpadding(im_str)
         # Deal with IV status
         if type(inIV) == type(None):
             print "Can't decrypt without known IV."
