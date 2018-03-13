@@ -8,16 +8,6 @@ from Crypto.Util import Counter
 # --- General utility functions
 # -------------------------------------------------------------------
 
-def filetomemst(filein):
-    im = Image.open(filein)
-    return im.tobytes()
-
-def memstrtofile(filein, fileout):
-    filein, im_mode, im_size
-    im = Image.open(filein)
-    Image.frombytes(im_mode, im_size, filein).save(fileout)
-    return True
-
 def getIV(inIV,action):
     # Deal with IV status
     if (type(inIV) == type(None)) and action == "encrypt":
@@ -98,13 +88,13 @@ def decryptCFB(im_str, inkey, inIV):
     return im_enc
 
 # -------------------------------------------
-# ---
+# --- Main
 # -------------------------------------------
 parser = argparse.ArgumentParser(description='AES Encryption and Decryption tool')
 parser.add_argument('-a','--action', help='Set action to encrypt or decrypt', required=True)
 parser.add_argument('-m','--mode', help='Specify AES mode: ECB, CTR, CFB, CBC, OFB', required=True)
 parser.add_argument('-p','--password', help='Specify a password', required=True)
-parser.add_argument('-v','--iv', help='Specify an initialization vector', required=False)
+parser.add_argument('-v','--iv', help='Specify an initialization vector, for CFB, CBC and OFB modes', required=False)
 parser.add_argument('-I','--image-in', help='Specify the input image', required=True)
 parser.add_argument('-O','--image-out', help='Specify the output image', required=False)
 args = vars(parser.parse_args())
@@ -139,32 +129,14 @@ if action == "encrypt":
     elif aesmode == "CFB":
         print "CFB"
         ourIV = getIV(inIV,action)
-#        # Deal with IV status
-#        if type(inIV) == type(None):
-#            ourIV = binascii.hexlify(os.urandom(AES.block_size))[:16]
-#        else:
-#            ourIV = inIV
-#        print "Our IV: " , ourIV, "\tLen\t" , len(ourIV)
         processed = encryptCFB(im_str, ourkey, ourIV)
     elif aesmode == "CBC":
         print "CBC"
         ourIV = getIV(inIV,action)
-#        # Deal with IV status
-#        if type(inIV) == type(None):
-#            ourIV = binascii.hexlify(os.urandom(AES.block_size))[:16]
-#        else:
-#            ourIV = inIV
-#        print "Our IV: " , ourIV, "\tLen\t" , len(ourIV)
         processed = encryptCBC(im_str, ourkey, ourIV)
     elif aesmode == "OFB":
         print "OFB"
         ourIV = getIV(inIV,action)
-#        # Deal with IV status
-#        if type(inIV) == type(None):
-#            ourIV = binascii.hexlify(os.urandom(AES.block_size))[:16]
-#        else:
-#            ourIV = inIV
-#        print "Our IV: " , ourIV, "\tLen\t" , len(ourIV)
         processed = encryptOFB(im_str, ourkey, ourIV)
 elif action == "decrypt":
     print "Decrypting..."
@@ -178,33 +150,18 @@ elif action == "decrypt":
     elif aesmode == "CFB":
         print "CFB"
         ourIV = getIV(inIV,action)
-#        # Deal with IV status
-#        if type(inIV) == type(None):
-#            print "Can't decrypt without known IV."
-#            exit(1)
-#        else:
-#            ourIV = inIV        
         processed = decryptCFB(im_str, ourkey, ourIV)
     elif aesmode == "CBC":
         print "CBC"
         ourIV = getIV(inIV,action)
-#        # Deal with IV status
-#        if type(inIV) == type(None):
-#            print "Can't decrypt without known IV."
-#            exit(1)
-#        else:
-#            ourIV = inIV
         processed = decryptCBC(im_str, ourkey, ourIV)
     elif aesmode == "OFB":
         print "OFB"
         ourIV = getIV(inIV,action)
-#        # Deal with IV status
-#        if type(inIV) == type(None):
-#            print "Can't decrypt without known IV."
-#            exit(1)
-#        else:
-#            ourIV = inIV
         processed = decryptOFB(im_str, ourkey, ourIV)
+else:
+    print "Action not defined."
+    exit(1)
 
 print "Saving to file %s..." % imageout
 Image.frombytes(im_mode, im_size, processed).save(imageout)
