@@ -116,6 +116,7 @@ im_size = im_x, im_y
 im_mode = im.mode
 
 ourkey = hashlib.sha256(password).digest()
+print "Key: \t" , binascii.hexlify(ourkey)
 
 if action == "encrypt":
     print "Encrypting..."

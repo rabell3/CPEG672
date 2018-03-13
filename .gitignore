@@ -1,8 +1,11 @@
+.vscode
 *prof*
 *student*
 settings.json
 .pylintrc
 *.pdf
+*.png
+*.jpg
 *.txt
 *.odt
 !email*.txt
