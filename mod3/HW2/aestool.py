@@ -25,7 +25,7 @@ def fixpadding(im_str):
         #print im_strln
         padamt = AES.block_size - im_strln % AES.block_size
         #print padamt
-        im_str += padamt * "*"
+        im_str += padamt * "\0"
     return im_str
 
 # -------------------------------------------------------------------
@@ -44,7 +44,7 @@ def encryptCTR(im_str, inkey):
 
 def encryptCBC(im_str, inkey, inIV):
     ouraes = AES.new(inkey, AES.MODE_CBC, inIV)
-    im_enc = inIV + ouraes.encrypt(im_str)
+    im_enc = ouraes.encrypt(im_str)
     return im_enc
 
 def encryptOFB(im_str, inkey, inIV):
@@ -117,20 +117,20 @@ if action == "encrypt":
 #        padamt = AES.block_size - im_strln % AES.block_size
 #        #print padamt
 #        im_str += padamt * "*"
-
+    im_str = fixpadding(im_str) 
     if aesmode == "ECB":
         print "ECB"
-        im_str = fixpadding(im_str)
+#        im_str = fixpadding(im_str)
         processed = encryptECB(im_str, ourkey)
     elif aesmode == "CTR":
         print "CTR"
-        im_str = fixpadding(im_str)
+#        im_str = fixpadding(im_str)
         processed = encryptCTR(im_str, ourkey)
     elif aesmode == "CFB":
         print "CFB"
     elif aesmode == "CBC":
         print "CBC"
-        im_str = fixpadding(im_str) 
+#        im_str = fixpadding(im_str) 
         # Deal with IV status
         if type(inIV) == type(None):
             ourIV = binascii.hexlify(os.urandom(AES.block_size))[:16]
@@ -146,18 +146,19 @@ if action == "encrypt":
         else:
             ourIV = inIV
         print "Our IV: " , ourIV, "\tLen\t" , len(ourIV)
-        im_str = fixpadding(im_str)
+#        im_str = fixpadding(im_str)
         processed = encryptOFB(im_str, ourkey, ourIV)
 elif action == "decrypt":
     print "Decrypting..."
-    # Deal with padding/block_size issues
-    if len(im_str) % AES.block_size != 0:
-        #print "hereIam"
-        im_strln = len(im_str)
-        #print im_strln
-        padamt = AES.block_size - im_strln % AES.block_size
-        #print padamt
-        im_str += padamt * "*"
+#    # Deal with padding/block_size issues
+#    if len(im_str) % AES.block_size != 0:
+#        #print "hereIam"
+#        im_strln = len(im_str)
+#        #print im_strln
+#        padamt = AES.block_size - im_strln % AES.block_size
+#        #print padamt
+#        im_str += padamt * "*"
+    im_str = fixpadding(im_str) 
 
     if aesmode == "ECB":
         print "ECB"
@@ -169,7 +170,7 @@ elif action == "decrypt":
         print "CFB"
     elif aesmode == "CBC":
         print "CBC"
-        im_str = fixpadding(im_str) 
+#        im_str = fixpadding(im_str) 
         # Deal with IV status
         if type(inIV) == type(None):
             print "Can't decrypt without known IV."
@@ -179,7 +180,7 @@ elif action == "decrypt":
         processed = decryptCBC(im_str, ourkey, ourIV)
     elif aesmode == "OFB":
         print "OFB"
-        im_str = fixpadding(im_str)
+#        im_str = fixpadding(im_str)
         # Deal with IV status
         if type(inIV) == type(None):
             print "Can't decrypt without known IV."
