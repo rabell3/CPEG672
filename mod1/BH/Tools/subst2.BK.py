@@ -94,7 +94,6 @@ print "encoded: " , codedmessage
 #####    print find_nth_frequent_ltr(normal_freqs, i)
 #####    print find_nth_frequent_ltr(findfreq(codedmessage), i)
 #####thisscore = 301
-"""
 while thisscore < 500 and p<1000000:
     c=0
     #thiskey = bestkey
@@ -132,23 +131,3 @@ while thisscore < 500 and p<1000000:
 
 print "seedkey: " , bestkey
 print "decoded: " , codedmessage
-"""
-bestsofar = 0
-i=0
-keys=thiskey
-while bestsofar < 500:
-    answer=""    
-    print keys
-    for I in range(len(codedmessage)):
-        Keyati = keys[I % len(keys)]
-#        print Keyati
-#        print ord(chr(26))-ord(Keyati)
-        answer += shiftBy(codedmessage [I], 26-ord(Keyati))
-
-    Thisguess=answer
-    thisfitness=fitsenglish(Thisguess, engsrc)
-    if thisfitness > bestsofar:
-        bestsofar=thisfitness
-        bestguess=Thisguess
-#    i+=1
-#    print "Round %i" % i
