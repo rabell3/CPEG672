@@ -1,6 +1,7 @@
 .vscode
 *prof*
 *student*
+keystuff/
 settings.json
 .pylintrc
 *.pdf
