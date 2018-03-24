@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 import os, hashlib, binascii, sys, argparse, socket, random
-import numpy
 from Crypto import Random
 from Crypto.Cipher import AES
+from Crypto.PublicKey import ECC
 from Crypto.Util import Counter
 from Crypto.Util.number import *
 from colorama import *
@@ -50,7 +50,15 @@ def calcpower(b, p):
 
     return res
 
-
+def power(x, y):
+    # from http://cs.lmu.edu/~ray/notes/numalgs/
+    if y == 0:
+        return 1
+    h = pow(x, y // 2)
+    result = h * h
+    if y & 1:
+        result *= x
+    return result
 
 
 
@@ -95,9 +103,11 @@ print(Fore.RED + 'Connecting to: '), (Fore.BLUE + '%s') % server
 
 #for key in ourparams:
 #    print key ," -> ", ourparams[key]
-da = genECCpriv()
+#da = genECCpriv()
 #da = os.urandom(random.randrange(ourparams["Order"]))
-print da
-print "pubKey:\t", numpy.dot(da,ourparams["Gener"])
+#print da
+#print "pubKey:\t", power(da,ourparams["Gener"])
+key = ECC.generate(curve="secp256r1")
+print key
 print('All done now.')
 
