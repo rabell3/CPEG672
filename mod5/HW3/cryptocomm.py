@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os, hashlib, binascii, sys, argparse, socket, random
+import os, hashlib, binascii, sys, argparse, socket, random, pickle
 from Crypto import Random
 from Crypto.Cipher import AES
 from Crypto.PublicKey import ECC
@@ -26,10 +26,15 @@ def genECCpriv():
     print thisgcd
     base = 2
     A = pow(base, a, p)
-    print "a (!!):\t" , a
-    print "p: \t" , p, "\n" , "base: \t" , base, "\n", "A: \t" , A
-    return a
+#    print "a (!!):\t" , a
+#    print "p: \t" , p, "\n" , "base: \t" , base, "\n", "A: \t" , A
+    privtup = p, base, A, a
+    return privtup
 
+def genECCpub(inprivkey):
+    pubX = inprivkey * ourparams["Gener"][0]
+    pubY = inprivkey * ourparams["Gener"][1]
+    return pubX, pubY
 
 def calcpower(b, p):
     """
@@ -59,38 +64,49 @@ def power(x, y):
         result *= x
     return result
 
-
+def genSharedSecret(inpubkey):
+    return inpubkey*ourparams["Gener"][0]
 
 #def genECCpriv():
 #    return random.randrange(0,ourparams["Order"])
 
-def servermode(portIn):
+def servermode(portIn, pubkey, inpriv):
     s = socket.socket()         # Create a socket object
-    host = socket.gethostname() # Get local machine name
+#    host = socket.gethostname() # Get local machine name
+    host = ''
+    myname = os.uname()[1]
     port = portIn               # Reserve a port for your service.
     s.bind((host, port))        # Bind to the port
 
     s.listen(5)                 # Now wait for client connection.
     while True:
         c, addr = s.accept()     # Establish connection with client.
-        print(Fore.BLUE + 'Got connection from: '), (Fore.YELLOW + '%s') % addr
+#        print(Fore.BLUE + 'Got connection from: '), (Fore.YELLOW + '%s') % addr
 #        print 'Got connection from', addr
         print c
-        pkt_data = c.recv(1024)
-        c.send('Thank you for connecting to %s' % host)
-        print(Fore.BLUE + 'Received: '), (Fore.YELLOW + '%s') % pkt_data
+        r_data = c.recv(1024)
+        print(Fore.BLUE + 'Received: '), (Fore.YELLOW + '%s') % r_data
+        r_pub = r_data
+        print "r_pub " , r_pub
+        c_sharedkey = inpriv*1
+        s_data = str("checked:" , c_sharedkey)
+        print(Fore.BLUE + 'Sending: '), (Fore.YELLOW + '%s') % s_data
+        c.send(s_data)
+        c.send('Thank you for connecting to %s' % myname)
         c.close()                # Close the connection
 
-def clientmode(portIn, hostIn, pubkey):
+def clientmode(portIn, hostIn, pubkey, inpriv):
     s = socket.socket()         # Create a socket object
     #host = socket.gethostname() # Get local machine name
     host = hostIn
     port = portIn                # Reserve a port for your service.
 
     s.connect((host, port))
-    print "Sending public: %s" % pubkey
-    s.sendall(str(pubkey))
+    print "Sending public: %s" % str(pubkey)
+    pkt_data = "pubkey" , pubkey[0], pubkey[1]
+    s.send(pickle.dumps(pkt_data))
     print s.recv(1024)
+    c_sharedkey = inpriv*1
     s.close                     # Close the socket when done
 
 # ------------------------------------------------------------------
@@ -102,15 +118,11 @@ init(autoreset=True)
 
 #for key in ourparams:
 #    print key ," -> ", ourparams[key]
-privkey = genECCpriv()
+myp, myBase, myPubA, myPrivKey = genECCpriv()
 #da = os.urandom(random.randrange(ourparams["Order"]))
-print "private: %s" % privkey
-ourpoint = Point((ourparams["Gener"][0]),(ourparams["Gener"][1]))
-pubkey = Point.mul(ourpoint,privkey)
-#print "Sending public: %s" % pubkey
-#s.sendall(pubkey)
-
-#print "pubKey:\t", power(da,ourparams["Gener"])
+print "private: %s" % myPrivKey
+pubkey = genECCpub(myPrivKey)
+print "my pubKey:\t", pubkey
 #key = ECC.generate(curve="secp256r1")
 #print key
 
@@ -118,10 +130,10 @@ pubkey = Point.mul(ourpoint,privkey)
 
 if mode == 's':
     print(Fore.RED + 'Listening on: '), (Fore.BLUE + '%s') % unsecPort
-    servermode(unsecPort)
+    servermode(unsecPort, pubkey, myPrivKey)
 elif mode == 'c':
     print(Fore.RED + 'Connecting to: '), (Fore.BLUE + '%s') % server
-    clientmode(unsecPort, server, pubkey)
+    clientmode(unsecPort, server, pubkey, myPrivKey)
 
 
 print('All done now.')
