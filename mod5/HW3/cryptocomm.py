@@ -7,7 +7,7 @@ from Crypto.PublicKey import ECC
 from Crypto.Util import Counter
 from Crypto.Util.number import *
 from colorama import *
-from rosecode import *
+#from rosecode import *
 
 srvPort = 1672
 
@@ -35,39 +35,8 @@ def genECCpub(inprivkey):
     pubY = inprivkey * ourparams["Gener"][1]
     return pubX, pubY
 
-def calcpower(b, p):
-    """
-    From https://stackoverflow.com/questions/1019740/speed-of-calculating-powers-in-python
-    Calculates b^p
-    Complexity O(log p)
-    b -> double
-    p -> integer
-    res -> double
-    """
-    res = 1
-
-    while p:
-        if p & 0x1: res *= b
-        b *= b
-        p >>= 1
-
-    return res
-
-def power(x, y):
-    # from http://cs.lmu.edu/~ray/notes/numalgs/
-    if y == 0:
-        return 1
-    h = pow(x, y // 2)
-    result = h * h
-    if y & 1:
-        result *= x
-    return result
-
 def genSharedSecret(inprivkey, inpubkey):
     return inprivkey*inpubkey[0]   #returns x-coordinate only
-
-#def genECCpriv():
-#    return random.randrange(0,ourparams["Order"])
 
 def servermode(portIn, pubkey, inpriv):
     s = socket.socket()         # Create a socket object
@@ -82,14 +51,23 @@ def servermode(portIn, pubkey, inpriv):
         c, addr = s.accept()     # Establish connection with client.
 #        print(Fore.BLUE + 'Got connection from: '), (Fore.YELLOW + '%s') % addr
 #        print 'Got connection from', addr
-        print c
-        r_data = c.recv(1024)
+#        print c
+        r_data = pickle.loads(c.recv(1024))
+#        r_data =c.recv(1024)
         print(Fore.BLUE + 'Received: '), (Fore.YELLOW + '%s') % r_data
-        r_pub = pickle.loads(r_data)
-        print "r_pub " , r_pub
-        print "r_pubX: " , r_pub[1]
-        c_sharedkey = inpriv*r_pub[1]
-        s_data = "shkey" , c_sharedkey
+        r_pub = r_data
+#        print "r_pub " , r_pub
+#        print "r_pubX: " , r_pub[1]
+    
+        print "Sending public: %s" % str(pubkey)
+        pkt_data = "pubkey" , pubkey[0], pubkey[1]
+#        c.sendall(pickle.dumps(pkt_data))
+        c.sendall(pkt_data)
+
+        sharedkey = hashlib.sha256(inpriv*r_pub[0])
+        print "Sharedkey: \t " , sharedkey
+
+
         print(Fore.BLUE + 'Sending: '), (Fore.YELLOW + '%s') % s_data
         c.send(s_data)
         c.send('Thank you for connecting to %s' % myname)
@@ -105,8 +83,13 @@ def clientmode(portIn, hostIn, pubkey, inpriv):
     print "Sending public: %s" % str(pubkey)
     pkt_data = "pubkey" , pubkey[0], pubkey[1]
     s.send(pickle.dumps(pkt_data))
-    print s.recv(1024)
-    c_sharedkey = inpriv*r_pub[1]
+#    s.send(pkt_data)
+#    r_data = pickle.loads(s.recv(1024))
+    r_data =s.recv(1024)
+    print(Fore.BLUE + 'Received: '), (Fore.YELLOW + '%s') % r_data
+    r_pub = r_data
+
+    sharedkey = hashlib.sha256(inpriv*r_pub[0])
     r_data = c.recv(1024)
 
     s.close                     # Close the socket when done
@@ -142,20 +125,25 @@ myPubKey = genECCpub(myPrivKey)                     # Our public key seconmd
 if mode == 's':
     host = ''
     print(Fore.RED + 'Listening on: '), (Fore.BLUE + '%s') % srvPort
+    servermode(srvPort, myPubKey, myPrivKey)
+    """
     s.bind((host, srvPort))        # Bind to the port    
     s.listen(5)                 # Now wait for client connection.
     while True:
         c, addr = s.accept()     # Establish connection with client.
-        print 'Got connection from', addr
         pkt = c.recv(1024)
+        print 'Got connection from', addr
         c.send('Thank you for connecting %s' %pkt)
         c.close()                # Close the connection
+    """
 elif mode == 'c':
     print(Fore.RED + 'Connecting to: '), (Fore.BLUE + '%s') % server
+    clientmode(srvPort, server, myPubKey, myPrivKey)
+    """
     s.connect((server, srvPort))
-    s.send('Hello from %s' % myname)
+    s.sendall('Hello from %s' % myname)
     print s.recv(1024)
     s.close                     # Close the socket when done
-
+    """
 
 print('All done now.')
