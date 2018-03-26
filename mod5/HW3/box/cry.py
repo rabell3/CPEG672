@@ -32,3 +32,6 @@ def genECCpub(inprivkey):
 
 def genSharedSecret(inpubkey):
     return inpubkey*ourparams["Gener"][0]
+
+def rsaSigner(data, inkey):
+    return

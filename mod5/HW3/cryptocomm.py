@@ -63,8 +63,8 @@ def power(x, y):
         result *= x
     return result
 
-def genSharedSecret(inpubkey):
-    return inpubkey*ourparams["Gener"][0]
+def genSharedSecret(inprivkey, inpubkey):
+    return inprivkey*inpubkey[0]   #returns x-coordinate only
 
 #def genECCpriv():
 #    return random.randrange(0,ourparams["Order"])
@@ -126,19 +126,16 @@ def packet_processor(inConn, inPacket):
 
 mode = sys.argv[1]
 server = sys.argv[2]
-myname = os.uname()[1]
 init(autoreset=True)
 s = socket.socket()
 
-#for key in ourparams:
-#    print key ," -> ", ourparams[key]
-myp, myBase, myPubA, myPrivKey = genECCpriv()
-#da = os.urandom(random.randrange(ourparams["Order"]))
-print "private: %s" % myPrivKey
-pubkey = genECCpub(myPrivKey)
-print "my pubKey:\t", pubkey
-#key = ECC.generate(curve="secp256r1")
-#print key
+myname = os.uname()[1]
+## Lets generate our keys
+print "Generating keys for %s..." % myname
+myp, myBase, myPubA, myPrivKey = genECCpriv()       # Our private key first
+myPubKey = genECCpub(myPrivKey)                     # Our public key seconmd
+#print "private key: \t" , myPrivKey
+#print "public Key:\t", myPubKey
 
 
 

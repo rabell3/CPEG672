@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Python TCP Client A
 # Socket code from: http://www.techbeamers.com/python-tutorial-write-multithreaded-python-server/
-import socket, sys, os
+import socket, sys, os, pickle
 from cry import *
 
 netPort = 1672
@@ -33,6 +33,10 @@ while MESSAGE != 'exit':
     tcpClientA.sendall(MESSAGE)     
     data_in = tcpClientA.recv(BUFFER_SIZE)
     print " ClientA received data:", data_in
+    r_pub = pickle.loads(data_in)
+    print "r_pub " , r_pub
+    print "r_pubX: " , r_pub[1]
+    c_sharedkey = inpriv*r_pub[1]
     MESSAGE = raw_input("tcpClientA: Enter message to continue/ Enter exit:")
 
 tcpClientA.close() 

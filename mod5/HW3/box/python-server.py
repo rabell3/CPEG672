@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # From: http://www.techbeamers.com/python-tutorial-write-multithreaded-python-server/
-import socket
+import socket, pickle, sys, os
 from cry import *
 from threading import Thread
 from SocketServer import ThreadingMixIn
@@ -9,8 +9,8 @@ netPort = 1672
 
 # Multithreaded Python server : TCP Server Socket Thread Pool
 class ClientThread(Thread):
-
-    def __init__(self,ip,port):
+        
+    def __init__(self,ip,port,pubkey,privkey):
         Thread.__init__(self)
         self.ip = ip
         self.port = port
@@ -20,16 +20,20 @@ class ClientThread(Thread):
         while True :
             data_in = conn.recv(2048)
             print "Server received data:", data_in
+            pkt_data = "pubkey" , pubkey
+            s.send(pickle.dumps(pkt_data))
+
             MESSAGE = raw_input("Multithreaded Python server : Enter Response from Server/Enter exit:")
             if MESSAGE == 'exit':
                 break
             conn.sendall(MESSAGE)  # echo
 
 #----------------------------------------------------------------------------
+myname = os.uname()[1]
 ## Lets generate our keys
-print "Generating keys..."
-myp, myBase, myPubA, myPrivKey = genECCpriv()   # Our private key first
-myPubKey = genECCpub(myPrivKey)   # Our public key seconmd
+print "Generating keys for %s..." % myname
+myp, myBase, myPubA, myPrivKey = genECCpriv()       # Our private key first
+myPubKey = genECCpub(myPrivKey)                     # Our public key seconmd
 #print "private key: \t" , myPrivKey
 #print "public Key:\t", myPubKey
 
@@ -47,7 +51,7 @@ while True:
     tcpServer.listen(4)
     print "Multithreaded Python server : Waiting for connections from TCP clients..."
     (conn, (ip,port)) = tcpServer.accept()
-    newthread = ClientThread(ip,port)
+    newthread = ClientThread(ip,port,myPubKey,myPrivKey)
     newthread.start()
     threads.append(newthread)
 
